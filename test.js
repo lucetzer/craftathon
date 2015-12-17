@@ -19,11 +19,7 @@ $.getJSON(connectedLink2, function showData(data){
 
   data = dataWithDate;
 
-<<<<<<< HEAD
-  // filters through medicineName that has a mg or mcg
-=======
   // throw out everything with an illegitimate medicine name
->>>>>>> b2caec216877a6481fc7cc7bfbd6507799dbac2a
 
   function happyMedName(name) {
     if (!name) return false;
