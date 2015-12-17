@@ -19,6 +19,8 @@ $.getJSON(connectedLink2, function showData(data){
 
   data = dataWithDate;
 
+  // throw out everything with an illegitimate medicine name
+
   function happyMedName(name) {
     if (!name) return false;
     var words = [];
@@ -27,24 +29,37 @@ $.getJSON(connectedLink2, function showData(data){
     return (words.length > 2) && hasMG;
   }
 
+  var dataHappyName = data.filter(datum => happyMedName(datum.medicineName));
+  console.log("Length of HappyName data: ", dataHappyName.length);
+
+  // extract the medicine names that make sense
+
   function getMedName(fullName) {
     if (fullName === "") return "";
     return fullName.toLowerCase().split(" ")[0]
   }
 
-  var dataHappyName = data.filter(datum => happyMedName(datum.medicineName));
-  console.log("Length of HappyName data: ", dataHappyName.length);
-
   var happyNameList = unique(dataHappyName.map(datum => getMedName(datum.medicineName))).sort();
   console.log("number of HappyNames: ", happyNameList.length);
 
+  // count up the number of times each medicine is prescribed
+
   function howManyTimes(medName, data) {
-    return data.reduce(((acc, datum) => acc+(getMedName(datum.medicineName) == medName ? 1 : 0)), 0);
+    return data.reduce(((acc, datum) => acc + (getMedName(datum.medicineName) == medName ? 1 : 0)), 0);
   }
 
   var happyNameScore = happyNameList.map(name => howManyTimes(name, dataHappyName));
 
-  console.log(happyNameList);
-  console.log(happyNameScore);
+  // zip up the two arrays, sort them, unzips again
+
+  var happyNameBoth = happyNameList.map((name, index) => [name, happyNameScore[index]]);
+
+  var sortedBoth = happyNameBoth.sort((a, b) => (b[1] - a[1]));
+
+  var sortedNames = sortedBoth.map(pair => pair[0]);
+  var sortedScores = sortedBoth.map(pair => pair[1]);
+
+  console.log(sortedNames);
+  console.log(sortedScores);
 
 });
