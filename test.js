@@ -19,6 +19,8 @@ $.getJSON(connectedLink2, function showData(data){
 
   data = dataWithDate;
 
+  // filters through medicineName that has a mg or mcg
+
   function happyMedName(name) {
     if (!name) return false;
     var words = [];
