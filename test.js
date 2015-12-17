@@ -1,70 +1,38 @@
-
 var connectedLink2 = "http://serket.uk/badges/badgelist"
+
+function unique(list) {
+  var result = [];
+  $.each(list, function(i, e) {
+    if ($.inArray(e, result) == -1) result.push(e);
+  });
+  return result;
+}
 
 $.getJSON(connectedLink2, function showData(data){
 
-console.log("Length of data", data.length);
+  console.log("Length of data: ", data.length);
 
-var dispenseDate = [];
-  for (var i=0; i<data.length; i++){
-    if (data[i].dispenseDate){
-      //console.log((data[i].dispenseDate.substr(0,7)));
-      dispenseDate.push((data[i].dispenseDate))
-    };
-  };
-  
-  console.log('with dispence date', dispenseDate.length);
+  // throw out everything without a date
 
-  var stateTrue = [];
-  var stateFalse = [];
-    for (var i=0; i<data.length; i++){
-      if (data[i].statePattern){
-        //console.log(data[i].statePattern);
-        stateTrue.push((data[i].statePattern))
-      };
-      if (data[i].statePattern === false){
-        //console.log(data[i].statePattern);
-        stateFalse.push((data[i].statePattern))
-      };
+  dataWithDate = data.filter(datum => datum.dispenseDate);
+  console.log("Length of WithDate data: ", dataWithDate.length);
 
-    };
+  data = dataWithDate;
 
-    function unique(list) {
-        var result = [];
-        $.each(list, function(i, e) {
-            if ($.inArray(e, result) == -1) result.push(e);
-        });
-        return result;
-    }
+  function happyMedName(name) {
+    if (!name) return false;
+    var words = [];
+    words = name.split(" ").map(word => word.toLowerCase());
+    var hasMG = words.reduce(((acc, word) => (acc || word.match(/mc?g/g))), false);
+    return (words.length > 2) && hasMG;
+  }
 
+  dataHappyName = data.filter(datum => happyMedName(datum.medicineName));
+  console.log("Length of HappyName data: ", dataHappyName.length);
 
-    console.log(unique(stateFalse));
-    console.log(unique(stateTrue));;
-    console.log("True", stateTrue.length);
-    console.log("False", stateFalse.length);
+  dataFalse = dataHappyName.filter(datum => !datum.statePattern);
+  console.log("Length of False and HappyName data: ", dataFalse.length);
 
-    var badgeIdArray = [];
-      for (var i=0; i<data.length; i++){
-        if (data[i].badgeId){
-          badgeIdArray.push((data[i].badgeId))
-        };
-      };
-
-    console.log("ID number", badgeIdArray.length);
-    console.log("Unique id numbers", unique(badgeIdArray).length);
-
-
-    var medicineName = [];
-      for (var i=0; i<data.length; i++){
-        if (data[i].medicineName){
-  //        console.log(data[i].medicineName);
-          medicineName.push((data[i].medicineName))
-        };
-      };
-
-    console.log("Med name length", medicineName.length);
-    console.log("Unique med name", unique(medicineName).length);
-    console.log("Unique med name", unique(medicineName));
-
+  dataFalse.forEach(datum => console.log(datum));
 
 });
