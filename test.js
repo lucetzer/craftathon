@@ -14,7 +14,7 @@ $.getJSON(connectedLink2, function showData(data){
 
   // throw out everything without a date
 
-  dataWithDate = data.filter(datum => datum.dispenseDate);
+  var dataWithDate = data.filter(datum => datum.dispenseDate);
   console.log("Length of WithDate data: ", dataWithDate.length);
 
   data = dataWithDate;
@@ -27,12 +27,24 @@ $.getJSON(connectedLink2, function showData(data){
     return (words.length > 2) && hasMG;
   }
 
-  dataHappyName = data.filter(datum => happyMedName(datum.medicineName));
+  function getMedName(fullName) {
+    if (fullName === "") return "";
+    return fullName.toLowerCase().split(" ")[0]
+  }
+
+  var dataHappyName = data.filter(datum => happyMedName(datum.medicineName));
   console.log("Length of HappyName data: ", dataHappyName.length);
 
-  dataFalse = dataHappyName.filter(datum => !datum.statePattern);
-  console.log("Length of False and HappyName data: ", dataFalse.length);
+  var happyNameList = unique(dataHappyName.map(datum => getMedName(datum.medicineName))).sort();
+  console.log("number of HappyNames: ", happyNameList.length);
 
-  dataFalse.forEach(datum => console.log(datum));
+  function howManyTimes(medName, data) {
+    return data.reduce(((acc, datum) => acc+(getMedName(datum.medicineName) == medName ? 1 : 0)), 0);
+  }
+
+  var happyNameScore = happyNameList.map(name => howManyTimes(name, dataHappyName));
+
+  console.log(happyNameList);
+  console.log(happyNameScore);
 
 });
