@@ -62,4 +62,18 @@ $.getJSON(connectedLink2, function showData(data){
   console.log(sortedNames);
   console.log(sortedScores);
 
+  //
+
+  var dispenseDateTimes = dataHappyName.map(datum => datum.dispenseDate).sort();
+
+  var justTheDates = dispenseDateTimes.map(dateTime => dateTime.split('T')[0]);
+  var justTheTimes = dispenseDateTimes.map(dateTime => dateTime.split('T')[1]).sort();
+
+  var justTheHours = justTheTimes.map(time => time.slice(0,2));
+
+  console.log(dispenseDateTimes);
+  console.log(justTheDates);
+  console.log(justTheTimes);
+  console.log(unique(justTheHours));
+
 });
